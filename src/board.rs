@@ -42,6 +42,11 @@ impl PossibilitySet {
         u
     }
 
+    /// Tests if `self` is unique.
+    pub fn is_unique(&self) -> bool {
+        matches!(self.get_unique(), Some(_))
+    }
+
 }
 
 #[cfg(test)]
@@ -71,6 +76,17 @@ mod tests {
         assert_eq!(PossibilitySet::FULL.get_unique(), None);
         assert_eq!(PossibilitySet::unique(2).get_unique(), Some(2));
         assert_eq!(PossibilitySet::unique(4).get_unique(), Some(4));
+    }
+
+    #[test]
+    fn is_unique() {
+        assert!(!PossibilitySet::EMPTY.is_unique());
+        assert!(!PossibilitySet::FULL.is_unique());
+        assert!(PossibilitySet::unique(3).is_unique());
+        assert!(PossibilitySet::unique(6).is_unique());
+        assert!(!PossibilitySet([
+            false, true, true, false, true, true, false, true, false])
+                .is_unique());
     }
 
 }
