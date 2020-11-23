@@ -17,7 +17,7 @@ impl PossibilitySet {
     /// # Panics
     ///
     /// If `n >= N`.
-    pub fn singleton(n: usize) -> PossibilitySet {
+    pub fn unique(n: usize) -> PossibilitySet {
         let mut ns = [false; N];
         ns[n] = true;
         PossibilitySet(ns)
@@ -37,15 +37,15 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn singleton_out_of_range() {
-        let _ = PossibilitySet::singleton(N);
+    fn unique_out_of_range() {
+        let _ = PossibilitySet::unique(N);
     }
 
     #[test]
     fn count() {
         assert_eq!(PossibilitySet::EMPTY.count(), 0);
         assert_eq!(PossibilitySet::FULL.count(), N);
-        assert_eq!(PossibilitySet::singleton(3).count(), 1);
+        assert_eq!(PossibilitySet::unique(3).count(), 1);
         assert_eq!(PossibilitySet([
             false, true, true, false, true, true, false, true, false]).count(),
             5);
