@@ -28,6 +28,20 @@ impl PossibilitySet {
         self.0.iter().filter(|&b| *b).count()
     }
 
+    /// Returns the number if `self` is unique.
+    pub fn get_unique(&self) -> Option<usize> {
+        let mut u = None;
+        for (n, &b) in self.0.iter().enumerate() {
+            if b {
+                match u {
+                    None => u = Some(n),
+                    Some(_) => return None
+                }
+            }
+        }
+        u
+    }
+
 }
 
 #[cfg(test)]
@@ -49,6 +63,14 @@ mod tests {
         assert_eq!(PossibilitySet([
             false, true, true, false, true, true, false, true, false]).count(),
             5);
+    }
+
+    #[test]
+    fn get_unique() {
+        assert_eq!(PossibilitySet::EMPTY.get_unique(), None);
+        assert_eq!(PossibilitySet::FULL.get_unique(), None);
+        assert_eq!(PossibilitySet::unique(2).get_unique(), Some(2));
+        assert_eq!(PossibilitySet::unique(4).get_unique(), Some(4));
     }
 
 }
