@@ -47,6 +47,11 @@ impl PossibilitySet {
         matches!(self.get_unique(), Some(_))
     }
 
+    /// Tests if `self` is empty.
+    pub fn is_empty(&self) -> bool {
+        !self.0.iter().any(|&b| b)
+    }
+
 }
 
 #[cfg(test)]
@@ -87,6 +92,17 @@ mod tests {
         assert!(!PossibilitySet([
             false, true, true, false, true, true, false, true, false])
                 .is_unique());
+    }
+
+    #[test]
+    fn is_empty() {
+        assert!(PossibilitySet::EMPTY.is_empty());
+        assert!(!PossibilitySet::FULL.is_empty());
+        assert!(!PossibilitySet::unique(3).is_empty());
+        assert!(!PossibilitySet::unique(6).is_empty());
+        assert!(!PossibilitySet([
+            false, true, true, false, true, true, false, true, false])
+                .is_empty());
     }
 
 }
