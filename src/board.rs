@@ -1,3 +1,7 @@
+use std::fmt::Display;
+use std::fmt::Error;
+use std::fmt::Formatter;
+
 /// The size (the length of a edge) of a board: 9.
 pub const N: usize = 9;
 
@@ -57,6 +61,25 @@ impl PossibilitySet {
             .iter()
             .enumerate()
             .filter_map(|(n, &b)| if b { Some(n) } else { None })
+    }
+}
+
+/// 9x9 collection of cells.
+pub struct Board<T>(pub [[T; N]; N]);
+
+impl Display for Board<usize> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        for line in &self.0 {
+            let mut first = true;
+            for cell in line {
+                if !first {
+                    first = false;
+                    f.write_str(" ")?;
+                }
+                f.write_fmt(format_args!("{}", cell + 1))?;
+            }
+        }
+        Ok(())
     }
 }
 
