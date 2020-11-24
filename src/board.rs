@@ -5,7 +5,6 @@ pub const N: usize = 9;
 pub struct PossibilitySet(pub [bool; N]);
 
 impl PossibilitySet {
-
     /// The empty set.
     pub const EMPTY: PossibilitySet = PossibilitySet([false; N]);
 
@@ -35,7 +34,7 @@ impl PossibilitySet {
             if b {
                 match u {
                     None => u = Some(n),
-                    Some(_) => return None
+                    Some(_) => return None,
                 }
             }
         }
@@ -54,10 +53,11 @@ impl PossibilitySet {
 
     /// Iterates possibilities.
     pub fn iter(&self) -> impl Iterator<Item = usize> + '_ {
-        self.0.iter().enumerate()
+        self.0
+            .iter()
+            .enumerate()
             .filter_map(|(n, &b)| if b { Some(n) } else { None })
     }
-
 }
 
 #[cfg(test)]
@@ -76,9 +76,10 @@ mod tests {
         assert_eq!(PossibilitySet::EMPTY.count(), 0);
         assert_eq!(PossibilitySet::FULL.count(), N);
         assert_eq!(PossibilitySet::unique(3).count(), 1);
-        assert_eq!(PossibilitySet([
-            false, true, true, false, true, true, false, true, false]).count(),
-            5);
+        assert_eq!(
+            PossibilitySet([false, true, true, false, true, true, false, true, false]).count(),
+            5
+        );
     }
 
     #[test]
@@ -95,9 +96,9 @@ mod tests {
         assert!(!PossibilitySet::FULL.is_unique());
         assert!(PossibilitySet::unique(3).is_unique());
         assert!(PossibilitySet::unique(6).is_unique());
-        assert!(!PossibilitySet([
-            false, true, true, false, true, true, false, true, false])
-                .is_unique());
+        assert!(
+            !PossibilitySet([false, true, true, false, true, true, false, true, false]).is_unique()
+        );
     }
 
     #[test]
@@ -106,20 +107,23 @@ mod tests {
         assert!(!PossibilitySet::FULL.is_empty());
         assert!(!PossibilitySet::unique(3).is_empty());
         assert!(!PossibilitySet::unique(6).is_empty());
-        assert!(!PossibilitySet([
-            false, true, true, false, true, true, false, true, false])
-                .is_empty());
+        assert!(
+            !PossibilitySet([false, true, true, false, true, true, false, true, false]).is_empty()
+        );
     }
 
     #[test]
     fn possibility_iter() {
         assert_eq!(PossibilitySet::EMPTY.iter().next(), None);
-        assert_eq!(PossibilitySet::FULL.iter().collect::<Vec<usize>>(),
-            (0..N).collect::<Vec<usize>>());
-        assert_eq!(PossibilitySet([
-            true, false, true, true, false, false, true, false, true]).iter()
-            .collect::<Vec<usize>>(),
-            vec![0, 2, 3, 6, 8]);
+        assert_eq!(
+            PossibilitySet::FULL.iter().collect::<Vec<usize>>(),
+            (0..N).collect::<Vec<usize>>()
+        );
+        assert_eq!(
+            PossibilitySet([true, false, true, true, false, false, true, false, true])
+                .iter()
+                .collect::<Vec<usize>>(),
+            vec![0, 2, 3, 6, 8]
+        );
     }
-
 }
