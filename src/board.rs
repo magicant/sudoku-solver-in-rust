@@ -52,6 +52,12 @@ impl PossibilitySet {
         !self.0.iter().any(|&b| b)
     }
 
+    /// Iterates possibilities.
+    pub fn iter(&self) -> impl Iterator<Item = usize> + '_ {
+        self.0.iter().enumerate()
+            .filter_map(|(n, &b)| if b { Some(n) } else { None })
+    }
+
 }
 
 #[cfg(test)]
@@ -103,6 +109,17 @@ mod tests {
         assert!(!PossibilitySet([
             false, true, true, false, true, true, false, true, false])
                 .is_empty());
+    }
+
+    #[test]
+    fn possibility_iter() {
+        assert_eq!(PossibilitySet::EMPTY.iter().next(), None);
+        assert_eq!(PossibilitySet::FULL.iter().collect::<Vec<usize>>(),
+            (0..N).collect::<Vec<usize>>());
+        assert_eq!(PossibilitySet([
+            true, false, true, true, false, false, true, false, true]).iter()
+            .collect::<Vec<usize>>(),
+            vec![0, 2, 3, 6, 8]);
     }
 
 }
