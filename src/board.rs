@@ -2,8 +2,11 @@ use std::fmt::Display;
 use std::fmt::Error;
 use std::fmt::Formatter;
 
+/// The size (the length of a edge) of a block: 3.
+pub const N_BLOCK: usize = 3;
+
 /// The size (the length of a edge) of a board: 9.
-pub const N: usize = 9;
+pub const N: usize = N_BLOCK * N_BLOCK;
 
 /// Collection of possible numbers that may fill a cell.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

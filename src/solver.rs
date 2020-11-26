@@ -21,10 +21,10 @@ fn filter_col(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> b
 }
 
 fn filter_block(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> bool {
-    let top = i / 3 * 3;
-    let bottom = top + 3;
-    let left = j / 3 * 3;
-    let right = left + 3;
+    let top = i / N_BLOCK * N_BLOCK;
+    let bottom = top + N_BLOCK;
+    let left = j / N_BLOCK * N_BLOCK;
+    let right = left + N_BLOCK;
     let mut has_update = false;
     for i2 in top..bottom {
         if i != i2 {
