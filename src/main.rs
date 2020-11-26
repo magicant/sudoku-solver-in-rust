@@ -1,10 +1,12 @@
 mod board;
+mod solver;
 
 use board::*;
+use solver::for_each_solution;
 use std::io::BufRead;
 use std::io::Result;
 
-fn read_board() -> Result<Board<Option<usize>>> {
+fn read_problem() -> Result<Board<Option<usize>>> {
     let mut board = Board([[None; N]; N]);
     for (i, line) in std::io::stdin().lock().lines().take(N).enumerate() {
         let line = line?;
@@ -21,6 +23,7 @@ fn read_board() -> Result<Board<Option<usize>>> {
 }
 
 fn main() -> Result<()> {
-    let _board = read_board()?;
+    let board = read_problem()?;
+    for_each_solution(&board, |b| println!("{}", b));
     Ok(())
 }

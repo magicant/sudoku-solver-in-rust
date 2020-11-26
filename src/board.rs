@@ -6,7 +6,7 @@ use std::fmt::Formatter;
 pub const N: usize = 9;
 
 /// Collection of possible numbers that may fill a cell.
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PossibilitySet(pub [bool; N]);
 
 impl PossibilitySet {
@@ -66,6 +66,7 @@ impl PossibilitySet {
 }
 
 /// Cell of an intermediate board used in solving.
+#[derive(Clone, Copy)]
 pub struct SolvingCell {
     /// Possible values for this cell.
     value: PossibilitySet,
@@ -106,10 +107,28 @@ impl SolvingCell {
     pub fn is_unique(&self) -> bool {
         self.unique
     }
+
+    /// Returns the number if `self` is unique.
+    pub fn get_unique(&self) -> Option<usize> {
+        self.value.get_unique()
+    }
 }
 
 /// 9x9 collection of cells.
 pub struct Board<T>(pub [[T; N]; N]);
+
+impl Board<SolvingCell> {
+    /// Convert to a final board if `self` is a valid solution.
+    pub fn to_solution(&self) -> Option<Board<usize>> {
+        let mut solution = Board([[0; N]; N]);
+        for i in 0..N {
+            for j in 0..N {
+                solution.0[i][j] = self.0[i][j].get_unique()?;
+            }
+        }
+        Some(solution)
+    }
+}
 
 impl Display for Board<usize> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
@@ -209,5 +228,12 @@ mod tests {
         assert_eq!(some.value(), &PossibilitySet::unique(4));
         assert!(!some.has_update());
         assert!(some.is_unique());
+    }
+
+    #[test]
+    fn solving_cell_get_unique() {
+        assert_eq!(SolvingCell::new(None).get_unique(), None);
+        assert_eq!(SolvingCell::new(Some(1)).get_unique(), Some(1));
+        assert_eq!(SolvingCell::new(Some(8)).get_unique(), Some(8));
     }
 }
