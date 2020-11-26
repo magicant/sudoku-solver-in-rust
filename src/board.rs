@@ -78,6 +78,7 @@ impl Display for Board<usize> {
                 }
                 f.write_fmt(format_args!("{}", cell + 1))?;
             }
+            f.write_str("\n")?;
         }
         Ok(())
     }
