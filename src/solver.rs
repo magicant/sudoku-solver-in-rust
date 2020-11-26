@@ -1,6 +1,6 @@
 use crate::board::*;
 
-fn scan_row(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> bool {
+fn filter_row(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> bool {
     let mut has_update = false;
     for j2 in 0..N {
         if j != j2 {
@@ -10,7 +10,7 @@ fn scan_row(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> boo
     has_update
 }
 
-fn scan_col(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> bool {
+fn filter_col(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> bool {
     let mut has_update = false;
     for i2 in 0..N {
         if i != i2 {
@@ -20,7 +20,7 @@ fn scan_col(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> boo
     has_update
 }
 
-fn scan_block(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> bool {
+fn filter_block(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> bool {
     let top = i / 3 * 3;
     let bottom = top + 3;
     let left = j / 3 * 3;
@@ -45,7 +45,9 @@ fn examine_cell(board: &mut Board<SolvingCell>, i: usize, j: usize) -> bool {
 
     match board.0[i][j].get_unique() {
         None => false,
-        Some(n) => scan_row(board, i, j, n) | scan_col(board, i, j, n) | scan_block(board, i, j, n),
+        Some(n) => {
+            filter_row(board, i, j, n) | filter_col(board, i, j, n) | filter_block(board, i, j, n)
+        }
     }
 }
 
