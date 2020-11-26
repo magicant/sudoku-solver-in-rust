@@ -66,7 +66,7 @@ impl PossibilitySet {
 }
 
 /// Cell of an intermediate board used in solving.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct SolvingCell {
     /// Possible values for this cell.
     value: PossibilitySet,
@@ -113,6 +113,16 @@ impl SolvingCell {
         self.value.get_unique()
     }
 
+    /// Number of possibilities in this cell.
+    pub fn count(&self) -> usize {
+        self.value.count()
+    }
+
+    /// Iterates possibilities.
+    pub fn iter(&self) -> impl Iterator<Item = usize> + '_ {
+        self.value.iter()
+    }
+
     /// Remove the given possibility.
     /// Returns true if `n` was previously contained in `self`.
     pub fn remove(&mut self, n: usize) -> bool {
@@ -125,6 +135,7 @@ impl SolvingCell {
 }
 
 /// 9x9 collection of cells.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Board<T>(pub [[T; N]; N]);
 
 impl Board<SolvingCell> {
