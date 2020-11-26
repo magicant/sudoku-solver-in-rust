@@ -91,12 +91,12 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn unique_out_of_range() {
+    fn possibility_set_unique_out_of_range() {
         let _ = PossibilitySet::unique(N);
     }
 
     #[test]
-    fn count() {
+    fn possibility_set_count() {
         assert_eq!(PossibilitySet::EMPTY.count(), 0);
         assert_eq!(PossibilitySet::FULL.count(), N);
         assert_eq!(PossibilitySet::unique(3).count(), 1);
@@ -107,7 +107,7 @@ mod tests {
     }
 
     #[test]
-    fn get_unique() {
+    fn possibility_set_get_unique() {
         assert_eq!(PossibilitySet::EMPTY.get_unique(), None);
         assert_eq!(PossibilitySet::FULL.get_unique(), None);
         assert_eq!(PossibilitySet::unique(2).get_unique(), Some(2));
@@ -115,7 +115,7 @@ mod tests {
     }
 
     #[test]
-    fn is_unique() {
+    fn possibility_set_is_unique() {
         assert!(!PossibilitySet::EMPTY.is_unique());
         assert!(!PossibilitySet::FULL.is_unique());
         assert!(PossibilitySet::unique(3).is_unique());
@@ -126,7 +126,7 @@ mod tests {
     }
 
     #[test]
-    fn is_empty() {
+    fn possibility_set_is_empty() {
         assert!(PossibilitySet::EMPTY.is_empty());
         assert!(!PossibilitySet::FULL.is_empty());
         assert!(!PossibilitySet::unique(3).is_empty());
@@ -137,7 +137,7 @@ mod tests {
     }
 
     #[test]
-    fn possibility_iter() {
+    fn possibility_set_iter() {
         assert_eq!(PossibilitySet::EMPTY.iter().next(), None);
         assert_eq!(
             PossibilitySet::FULL.iter().collect::<Vec<usize>>(),
