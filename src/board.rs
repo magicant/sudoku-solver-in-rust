@@ -112,6 +112,16 @@ impl SolvingCell {
     pub fn get_unique(&self) -> Option<usize> {
         self.value.get_unique()
     }
+
+    /// Remove the given possibility.
+    /// Returns true if `n` was previously contained in `self`.
+    pub fn remove(&mut self, n: usize) -> bool {
+        self.value.0[n] && {
+            self.value.0[n] = false;
+            self.update = true;
+            true
+        }
+    }
 }
 
 /// 9x9 collection of cells.
