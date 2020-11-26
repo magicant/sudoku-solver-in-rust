@@ -145,8 +145,9 @@ impl Display for Board<usize> {
         for line in &self.0 {
             let mut first = true;
             for cell in line {
-                if !first {
+                if first {
                     first = false;
+                } else {
                     f.write_str(" ")?;
                 }
                 f.write_fmt(format_args!("{}", cell + 1))?;
