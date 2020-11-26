@@ -87,7 +87,7 @@ impl SolvingCell {
             },
             Some(n) => SolvingCell {
                 value: PossibilitySet::unique(n),
-                update: false,
+                update: true,
                 unique: true,
             },
         }
@@ -226,7 +226,7 @@ mod tests {
     fn solving_cell_new_some() {
         let some = SolvingCell::new(Some(4));
         assert_eq!(some.value(), &PossibilitySet::unique(4));
-        assert!(!some.has_update());
+        assert!(some.has_update());
         assert!(some.is_unique());
     }
 
