@@ -6,6 +6,7 @@ use std::fmt::Formatter;
 pub const N: usize = 9;
 
 /// Collection of possible numbers that may fill a cell.
+#[derive(Debug, Eq, PartialEq)]
 pub struct PossibilitySet(pub [bool; N]);
 
 impl PossibilitySet {
@@ -61,6 +62,49 @@ impl PossibilitySet {
             .iter()
             .enumerate()
             .filter_map(|(n, &b)| if b { Some(n) } else { None })
+    }
+}
+
+/// Cell of an intermediate board used in solving.
+pub struct SolvingCell {
+    /// Possible values for this cell.
+    value: PossibilitySet,
+    /// Whether this cell's value has changed and elimination is pending.
+    update: bool,
+    /// Whether this cell has been found unique.
+    unique: bool,
+}
+
+impl SolvingCell {
+    /// Creates a new cell.
+    pub fn new(v: Option<usize>) -> SolvingCell {
+        match v {
+            None => SolvingCell {
+                value: PossibilitySet::FULL,
+                update: false,
+                unique: false,
+            },
+            Some(n) => SolvingCell {
+                value: PossibilitySet::unique(n),
+                update: false,
+                unique: true,
+            },
+        }
+    }
+
+    /// Current possibilities of this cell.
+    pub fn value(&self) -> &PossibilitySet {
+        &self.value
+    }
+
+    /// Whether this cell's value has changed and elimination is pending.
+    pub fn has_update(&self) -> bool {
+        self.update
+    }
+
+    /// Whether this cell has been found unique.
+    pub fn is_unique(&self) -> bool {
+        self.unique
     }
 }
 
@@ -149,5 +193,21 @@ mod tests {
                 .collect::<Vec<usize>>(),
             vec![0, 2, 3, 6, 8]
         );
+    }
+
+    #[test]
+    fn solving_cell_new_none() {
+        let none = SolvingCell::new(None);
+        assert_eq!(none.value(), &PossibilitySet::FULL);
+        assert!(!none.has_update());
+        assert!(!none.is_unique());
+    }
+
+    #[test]
+    fn solving_cell_new_some() {
+        let some = SolvingCell::new(Some(4));
+        assert_eq!(some.value(), &PossibilitySet::unique(4));
+        assert!(!some.has_update());
+        assert!(some.is_unique());
     }
 }
