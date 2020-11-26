@@ -11,6 +11,7 @@ pub struct PossibilitySet(pub [bool; N]);
 
 impl PossibilitySet {
     /// The empty set.
+    #[cfg(test)]
     pub const EMPTY: PossibilitySet = PossibilitySet([false; N]);
 
     /// The set containing all possibilities.
@@ -44,16 +45,6 @@ impl PossibilitySet {
             }
         }
         u
-    }
-
-    /// Tests if `self` is unique.
-    pub fn is_unique(&self) -> bool {
-        matches!(self.get_unique(), Some(_))
-    }
-
-    /// Tests if `self` is empty.
-    pub fn is_empty(&self) -> bool {
-        !self.0.iter().any(|&b| b)
     }
 
     /// Iterates possibilities.
@@ -93,19 +84,9 @@ impl SolvingCell {
         }
     }
 
-    /// Current possibilities of this cell.
-    pub fn value(&self) -> &PossibilitySet {
-        &self.value
-    }
-
     /// Whether this cell's value has changed and elimination is pending.
     pub fn has_update(&self) -> bool {
         self.update
-    }
-
-    /// Whether this cell has been found unique.
-    pub fn is_unique(&self) -> bool {
-        self.unique
     }
 
     /// Returns the number if `self` is unique.
@@ -200,28 +181,6 @@ mod tests {
     }
 
     #[test]
-    fn possibility_set_is_unique() {
-        assert!(!PossibilitySet::EMPTY.is_unique());
-        assert!(!PossibilitySet::FULL.is_unique());
-        assert!(PossibilitySet::unique(3).is_unique());
-        assert!(PossibilitySet::unique(6).is_unique());
-        assert!(
-            !PossibilitySet([false, true, true, false, true, true, false, true, false]).is_unique()
-        );
-    }
-
-    #[test]
-    fn possibility_set_is_empty() {
-        assert!(PossibilitySet::EMPTY.is_empty());
-        assert!(!PossibilitySet::FULL.is_empty());
-        assert!(!PossibilitySet::unique(3).is_empty());
-        assert!(!PossibilitySet::unique(6).is_empty());
-        assert!(
-            !PossibilitySet([false, true, true, false, true, true, false, true, false]).is_empty()
-        );
-    }
-
-    #[test]
     fn possibility_set_iter() {
         assert_eq!(PossibilitySet::EMPTY.iter().next(), None);
         assert_eq!(
@@ -239,17 +198,15 @@ mod tests {
     #[test]
     fn solving_cell_new_none() {
         let none = SolvingCell::new(None);
-        assert_eq!(none.value(), &PossibilitySet::FULL);
+        assert_eq!(none.count(), 9);
         assert!(!none.has_update());
-        assert!(!none.is_unique());
     }
 
     #[test]
     fn solving_cell_new_some() {
         let some = SolvingCell::new(Some(4));
-        assert_eq!(some.value(), &PossibilitySet::unique(4));
+        assert_eq!(some.iter().collect::<Vec<usize>>(), vec![4]);
         assert!(some.has_update());
-        assert!(some.is_unique());
     }
 
     #[test]
