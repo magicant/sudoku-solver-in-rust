@@ -92,6 +92,11 @@ impl SolvingCell {
         self.update
     }
 
+    /// Whether this cell has possibility to be `n` in the solution.
+    pub fn can_be(&self, n: usize) -> bool {
+        self.value.0[n]
+    }
+
     /// Returns the number if `self` is unique.
     pub fn get_unique(&self) -> Option<usize> {
         self.value.get_unique()
@@ -203,6 +208,11 @@ mod tests {
         let none = SolvingCell::new(None);
         assert_eq!(none.count(), 9);
         assert!(!none.has_update());
+        assert!(none.can_be(0));
+        assert!(none.can_be(1));
+        assert!(none.can_be(4));
+        assert!(none.can_be(N - 2));
+        assert!(none.can_be(N - 1));
     }
 
     #[test]
@@ -210,6 +220,11 @@ mod tests {
         let some = SolvingCell::new(Some(4));
         assert_eq!(some.iter().collect::<Vec<usize>>(), vec![4]);
         assert!(some.has_update());
+        assert!(!some.can_be(0));
+        assert!(!some.can_be(1));
+        assert!(some.can_be(4));
+        assert!(!some.can_be(N - 2));
+        assert!(!some.can_be(N - 1));
     }
 
     #[test]

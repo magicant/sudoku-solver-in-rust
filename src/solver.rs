@@ -1,5 +1,91 @@
 use crate::board::*;
 
+fn examine_row(board: &mut Board<SolvingCell>, i: usize) -> bool {
+    let mut has_update = false;
+    'n: for n in 0..N {
+        // Find cells that can be n.
+        let mut found_j = None;
+        for j in 0..N {
+            if board.0[i][j].can_be(n) {
+                match found_j {
+                    None => found_j = Some(j),
+                    Some(_) => continue 'n,
+                }
+            }
+        }
+
+        // If there's exactly one such cell, make it unique.
+        if let Some(j) = found_j {
+            match board.0[i][j].get_unique() {
+                None => {
+                    board.0[i][j] = SolvingCell::new(Some(n));
+                    has_update = true;
+                }
+                Some(n2) => debug_assert_eq!(n, n2),
+            }
+        }
+    }
+    has_update
+}
+
+fn examine_col(board: &mut Board<SolvingCell>, j: usize) -> bool {
+    let mut has_update = false;
+    'n: for n in 0..N {
+        // Find cells that can be n.
+        let mut found_i = None;
+        for i in 0..N {
+            if board.0[i][j].can_be(n) {
+                match found_i {
+                    None => found_i = Some(i),
+                    Some(_) => continue 'n,
+                }
+            }
+        }
+
+        // If there's exactly one such cell, make it unique.
+        if let Some(i) = found_i {
+            match board.0[i][j].get_unique() {
+                None => {
+                    board.0[i][j] = SolvingCell::new(Some(n));
+                    has_update = true;
+                }
+                Some(n2) => debug_assert_eq!(n, n2),
+            }
+        }
+    }
+    has_update
+}
+
+fn examine_block(board: &mut Board<SolvingCell>, i: usize, j: usize) -> bool {
+    let mut has_update = false;
+    'n: for n in 0..N {
+        // Find cells that can be n.
+        let mut found_cell = None;
+        for i2 in i..(i + N_BLOCK) {
+            for j2 in j..(j + N_BLOCK) {
+                if board.0[i2][j2].can_be(n) {
+                    match found_cell {
+                        None => found_cell = Some((i2, j2)),
+                        Some(_) => continue 'n,
+                    }
+                }
+            }
+        }
+
+        // If there's exactly one such cell, make it unique.
+        if let Some((i2, j2)) = found_cell {
+            match board.0[i2][j2].get_unique() {
+                None => {
+                    board.0[i2][j2] = SolvingCell::new(Some(n));
+                    has_update = true;
+                }
+                Some(n2) => debug_assert_eq!(n, n2),
+            }
+        }
+    }
+    has_update
+}
+
 fn filter_row(board: &mut Board<SolvingCell>, i: usize, j: usize, n: usize) -> bool {
     let mut has_update = false;
     for j2 in 0..N {
@@ -53,11 +139,25 @@ fn examine_cell(board: &mut Board<SolvingCell>, i: usize, j: usize) -> bool {
 
 fn sweep(board: &mut Board<SolvingCell>) -> bool {
     let mut has_update = false;
+
+    for i in 0..N {
+        has_update |= examine_row(board, i);
+    }
+    for j in 0..N {
+        has_update |= examine_col(board, j);
+    }
+    for i in 0..N_BLOCK {
+        for j in 0..N_BLOCK {
+            has_update |= examine_block(board, i * N_BLOCK, j * N_BLOCK);
+        }
+    }
+
     for i in 0..N {
         for j in 0..N {
             has_update |= examine_cell(board, i, j);
         }
     }
+
     has_update
 }
 
