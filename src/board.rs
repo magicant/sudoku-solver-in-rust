@@ -92,6 +92,11 @@ impl SolvingCell {
         self.update
     }
 
+    /// Clears update status.
+    pub fn acknowledge(&mut self) {
+        self.update = false;
+    }
+
     /// Whether this cell has possibility to be `n` in the solution.
     pub fn can_be(&self, n: usize) -> bool {
         self.value.0[n]
@@ -225,6 +230,15 @@ mod tests {
         assert!(some.can_be(4));
         assert!(!some.can_be(N - 2));
         assert!(!some.can_be(N - 1));
+    }
+
+    #[test]
+    fn solving_cell_acknowledge() {
+        let mut cell = SolvingCell::new(Some(6));
+        cell.acknowledge();
+        assert!(!cell.has_update());
+        cell.acknowledge();
+        assert!(!cell.has_update());
     }
 
     #[test]

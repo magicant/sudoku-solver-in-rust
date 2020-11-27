@@ -129,6 +129,7 @@ fn examine_cell(board: &mut Board<SolvingCell>, i: usize, j: usize) -> bool {
         return false;
     }
 
+    board.0[i][j].acknowledge();
     match board.0[i][j].get_unique() {
         None => false,
         Some(n) => {
