@@ -164,12 +164,12 @@ impl Display for Board<usize> {
 }
 
 /// Iterator of cells in a row.
-pub fn row_iter(i: usize) -> impl Iterator<Item = (usize, usize)> {
+pub fn row_iter(i: usize) -> impl Iterator<Item = (usize, usize)> + Clone {
     (0..N).map(move |j| (i, j))
 }
 
 /// Iterator of cells in a column.
-pub fn col_iter(j: usize) -> impl Iterator<Item = (usize, usize)> {
+pub fn col_iter(j: usize) -> impl Iterator<Item = (usize, usize)> + Clone {
     (0..N).map(move |i| (i, j))
 }
 
@@ -178,7 +178,7 @@ pub fn col_iter(j: usize) -> impl Iterator<Item = (usize, usize)> {
 /// # Panics
 ///
 /// `i` and `j` must be 0, 3 or 6; otherwise this function panics.
-pub fn block_iter(i: usize, j: usize) -> impl Iterator<Item = (usize, usize)> {
+pub fn block_iter(i: usize, j: usize) -> impl Iterator<Item = (usize, usize)> + Clone {
     assert_eq!(i % N_BLOCK, 0);
     assert_eq!(j % N_BLOCK, 0);
     assert!(i / N_BLOCK < N_BLOCK);
