@@ -163,6 +163,29 @@ impl Display for Board<usize> {
     }
 }
 
+/// Iterator of cells in a row.
+pub fn row_iter(i: usize) -> impl Iterator<Item = (usize, usize)> {
+    (0..N).map(move |j| (i, j))
+}
+
+/// Iterator of cells in a column.
+pub fn col_iter(j: usize) -> impl Iterator<Item = (usize, usize)> {
+    (0..N).map(move |i| (i, j))
+}
+
+/// Iterator of cells in a block.
+///
+/// # Panics
+///
+/// `i` and `j` must be 0, 3 or 6; otherwise this function panics.
+pub fn block_iter(i: usize, j: usize) -> impl Iterator<Item = (usize, usize)> {
+    assert_eq!(i % N_BLOCK, 0);
+    assert_eq!(j % N_BLOCK, 0);
+    assert!(i / N_BLOCK < N_BLOCK);
+    assert!(j / N_BLOCK < N_BLOCK);
+    (0..N).map(move |n| (i + n / N_BLOCK, j + n % N_BLOCK))
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -246,5 +269,73 @@ mod tests {
         assert_eq!(SolvingCell::new(None).get_unique(), None);
         assert_eq!(SolvingCell::new(Some(1)).get_unique(), Some(1));
         assert_eq!(SolvingCell::new(Some(8)).get_unique(), Some(8));
+    }
+
+    #[test]
+    fn row_iter_values() {
+        assert_eq!(
+            row_iter(3).collect::<Vec<_>>(),
+            vec![
+                (3, 0),
+                (3, 1),
+                (3, 2),
+                (3, 3),
+                (3, 4),
+                (3, 5),
+                (3, 6),
+                (3, 7),
+                (3, 8)
+            ]
+        );
+    }
+
+    #[test]
+    fn col_iter_values() {
+        assert_eq!(
+            col_iter(7).collect::<Vec<_>>(),
+            vec![
+                (0, 7),
+                (1, 7),
+                (2, 7),
+                (3, 7),
+                (4, 7),
+                (5, 7),
+                (6, 7),
+                (7, 7),
+                (8, 7)
+            ]
+        );
+    }
+
+    #[test]
+    fn block_iter_values() {
+        assert_eq!(
+            block_iter(0, 6).collect::<Vec<_>>(),
+            vec![
+                (0, 6),
+                (0, 7),
+                (0, 8),
+                (1, 6),
+                (1, 7),
+                (1, 8),
+                (2, 6),
+                (2, 7),
+                (2, 8)
+            ]
+        );
+        assert_eq!(
+            block_iter(6, 3).collect::<Vec<_>>(),
+            vec![
+                (6, 3),
+                (6, 4),
+                (6, 5),
+                (7, 3),
+                (7, 4),
+                (7, 5),
+                (8, 3),
+                (8, 4),
+                (8, 5)
+            ]
+        );
     }
 }
