@@ -272,6 +272,26 @@ mod tests {
     }
 
     #[test]
+    fn solving_cell_iter() {
+        let mut cell = SolvingCell::new(None);
+        assert!(cell.iter().eq(0..N));
+        cell.remove(2);
+        cell.remove(5);
+        cell.remove(7);
+        assert_eq!(cell.iter().collect::<Vec<_>>(), vec![0, 1, 3, 4, 6, 8]);
+        cell.remove(1);
+        cell.remove(2);
+        cell.remove(8);
+        assert_eq!(cell.iter().collect::<Vec<_>>(), vec![0, 3, 4, 6]);
+        cell.remove(0);
+        cell.remove(4);
+        cell.remove(6);
+        assert_eq!(cell.iter().collect::<Vec<_>>(), vec![3]);
+        cell.remove(3);
+        assert_eq!(cell.iter().next(), None);
+    }
+
+    #[test]
     fn row_iter_values() {
         assert_eq!(
             row_iter(3).collect::<Vec<_>>(),
