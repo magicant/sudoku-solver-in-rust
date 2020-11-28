@@ -15,8 +15,6 @@ pub struct SolvingCell {
     values: [bool; N],
     /// Whether this cell's values have changed and filtering is pending.
     update: bool,
-    /// Whether this cell has been found unique.
-    unique: bool,
 }
 
 impl SolvingCell {
@@ -26,7 +24,6 @@ impl SolvingCell {
             None => SolvingCell {
                 values: [true; N],
                 update: false,
-                unique: false,
             },
             Some(n) => SolvingCell {
                 values: {
@@ -35,7 +32,6 @@ impl SolvingCell {
                     values
                 },
                 update: true,
-                unique: true,
             },
         }
     }
