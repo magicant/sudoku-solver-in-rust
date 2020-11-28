@@ -4,6 +4,8 @@ mod solver;
 use board::*;
 use solver::for_each_solution;
 use std::io::BufRead;
+use std::io::Error;
+use std::io::ErrorKind;
 use std::io::Result;
 
 fn read_problem() -> Result<Board<Option<usize>>> {
@@ -24,6 +26,16 @@ fn read_problem() -> Result<Board<Option<usize>>> {
 
 fn main() -> Result<()> {
     let board = read_problem()?;
-    for_each_solution(&board, |b| println!("{}", b));
-    Ok(())
+    let mut found_solution = false;
+
+    for_each_solution(&board, |b| {
+        found_solution = true;
+        println!("{}", b);
+    });
+
+    if found_solution {
+        Ok(())
+    } else {
+        Err(Error::new(ErrorKind::Other, "no solution"))
+    }
 }
