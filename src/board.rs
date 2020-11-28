@@ -8,63 +8,12 @@ pub const N_BLOCK: usize = 3;
 /// The size (the length of a edge) of a board: 9.
 pub const N: usize = N_BLOCK * N_BLOCK;
 
-/// Collection of possible numbers that may fill a cell.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct PossibilitySet(pub [bool; N]);
-
-impl PossibilitySet {
-    /// The empty set.
-    #[cfg(test)]
-    pub const EMPTY: PossibilitySet = PossibilitySet([false; N]);
-
-    /// The set containing all possibilities.
-    pub const FULL: PossibilitySet = PossibilitySet([true; N]);
-
-    /// Returns a set containing only one possibility.
-    ///
-    /// # Panics
-    ///
-    /// If `n >= N`.
-    pub fn unique(n: usize) -> PossibilitySet {
-        let mut ns = [false; N];
-        ns[n] = true;
-        PossibilitySet(ns)
-    }
-
-    /// Number of possibilities in this set.
-    pub fn count(&self) -> usize {
-        self.0.iter().filter(|&b| *b).count()
-    }
-
-    /// Returns the number if `self` is unique.
-    pub fn get_unique(&self) -> Option<usize> {
-        let mut u = None;
-        for (n, &b) in self.0.iter().enumerate() {
-            if b {
-                match u {
-                    None => u = Some(n),
-                    Some(_) => return None,
-                }
-            }
-        }
-        u
-    }
-
-    /// Iterates possibilities.
-    pub fn iter(&self) -> impl Iterator<Item = usize> + '_ {
-        self.0
-            .iter()
-            .enumerate()
-            .filter_map(|(n, &b)| if b { Some(n) } else { None })
-    }
-}
-
 /// Cell of an intermediate board used in solving.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct SolvingCell {
     /// Possible values for this cell.
-    value: PossibilitySet,
-    /// Whether this cell's value has changed and elimination is pending.
+    values: [bool; N],
+    /// Whether this cell's values have changed and filtering is pending.
     update: bool,
     /// Whether this cell has been found unique.
     unique: bool,
@@ -75,12 +24,16 @@ impl SolvingCell {
     pub fn new(v: Option<usize>) -> SolvingCell {
         match v {
             None => SolvingCell {
-                value: PossibilitySet::FULL,
+                values: [true; N],
                 update: false,
                 unique: false,
             },
             Some(n) => SolvingCell {
-                value: PossibilitySet::unique(n),
+                values: {
+                    let mut values = [false; N];
+                    values[n] = true;
+                    values
+                },
                 update: true,
                 unique: true,
             },
@@ -99,29 +52,39 @@ impl SolvingCell {
 
     /// Whether this cell has possibility to be `n` in the solution.
     pub fn can_be(&self, n: usize) -> bool {
-        self.value.0[n]
+        self.values[n]
     }
 
     /// Returns the number if `self` is unique.
     pub fn get_unique(&self) -> Option<usize> {
-        self.value.get_unique()
+        let mut i = self.iter();
+        let n = i.next();
+        if let Some(_) = n {
+            if let Some(_) = i.next() {
+                return None;
+            }
+        }
+        n
     }
 
     /// Number of possibilities in this cell.
     pub fn count(&self) -> usize {
-        self.value.count()
+        self.iter().count()
     }
 
     /// Iterates possibilities.
     pub fn iter(&self) -> impl Iterator<Item = usize> + '_ {
-        self.value.iter()
+        self.values
+            .iter()
+            .enumerate()
+            .filter_map(|(n, &b)| if b { Some(n) } else { None })
     }
 
     /// Remove the given possibility.
     /// Returns true if `n` was previously contained in `self`.
     pub fn remove(&mut self, n: usize) -> bool {
-        self.value.0[n] && {
-            self.value.0[n] = false;
+        self.values[n] && {
+            self.values[n] = false;
             self.update = true;
             true
         }
@@ -190,46 +153,6 @@ pub fn block_iter(i: usize, j: usize) -> impl Iterator<Item = (usize, usize)> + 
 mod tests {
 
     use super::*;
-
-    #[test]
-    #[should_panic]
-    fn possibility_set_unique_out_of_range() {
-        let _ = PossibilitySet::unique(N);
-    }
-
-    #[test]
-    fn possibility_set_count() {
-        assert_eq!(PossibilitySet::EMPTY.count(), 0);
-        assert_eq!(PossibilitySet::FULL.count(), N);
-        assert_eq!(PossibilitySet::unique(3).count(), 1);
-        assert_eq!(
-            PossibilitySet([false, true, true, false, true, true, false, true, false]).count(),
-            5
-        );
-    }
-
-    #[test]
-    fn possibility_set_get_unique() {
-        assert_eq!(PossibilitySet::EMPTY.get_unique(), None);
-        assert_eq!(PossibilitySet::FULL.get_unique(), None);
-        assert_eq!(PossibilitySet::unique(2).get_unique(), Some(2));
-        assert_eq!(PossibilitySet::unique(4).get_unique(), Some(4));
-    }
-
-    #[test]
-    fn possibility_set_iter() {
-        assert_eq!(PossibilitySet::EMPTY.iter().next(), None);
-        assert_eq!(
-            PossibilitySet::FULL.iter().collect::<Vec<usize>>(),
-            (0..N).collect::<Vec<usize>>()
-        );
-        assert_eq!(
-            PossibilitySet([true, false, true, true, false, false, true, false, true])
-                .iter()
-                .collect::<Vec<usize>>(),
-            vec![0, 2, 3, 6, 8]
-        );
-    }
 
     #[test]
     fn solving_cell_new_none() {
