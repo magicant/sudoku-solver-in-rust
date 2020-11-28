@@ -107,9 +107,9 @@ fn sweep(board: &mut Board<SolvingCell>) -> bool {
     has_update
 }
 
-fn case_analysis<F>(board: Board<SolvingCell>, f: F)
+fn case_analysis<F>(board: Board<SolvingCell>, f: &mut F)
 where
-    F: FnMut(Board<usize>) + Copy,
+    F: FnMut(Board<usize>),
 {
     // Find a cell with least possibilities.
     let k = (0..(N * N))
@@ -132,9 +132,9 @@ where
     }
 }
 
-fn solve<F>(mut board: Board<SolvingCell>, mut f: F)
+fn solve<F>(mut board: Board<SolvingCell>, f: &mut F)
 where
-    F: FnMut(Board<usize>) + Copy,
+    F: FnMut(Board<usize>),
 {
     while sweep(&mut board) {}
 
@@ -146,9 +146,9 @@ where
     case_analysis(board, f);
 }
 
-pub fn for_each_solution<F>(problem: &Board<Option<usize>>, f: F)
+pub fn for_each_solution<F>(problem: &Board<Option<usize>>, mut f: F)
 where
-    F: FnMut(Board<usize>) + Copy,
+    F: FnMut(Board<usize>),
 {
     // Convert to Board<SolvingCell>
     let mut solving_board = Board([[SolvingCell::new(None); N]; N]);
@@ -158,5 +158,5 @@ where
         }
     }
 
-    solve(solving_board, f);
+    solve(solving_board, &mut f);
 }
