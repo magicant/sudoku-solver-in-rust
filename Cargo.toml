@@ -1,9 +1,13 @@
 [package]
 name = "sudoku-solver-in-rust"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["WATANABE Yuki <magicant@wonderwand.net>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "A simple sudoku solver"
+homepage = "https://github.com/magicant/sudoku-solver-in-rust"
+repository = "https://github.com/magicant/sudoku-solver-in-rust"
+license = "MIT"
+keywords = ["sudoku"]
+categories = ["command-line-utilities", "games"]
 
 [dependencies]
